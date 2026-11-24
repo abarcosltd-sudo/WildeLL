@@ -17,6 +17,9 @@ export default async function handler(req, res) {
   const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
   const email = String(body.email || "").trim().toLowerCase();
   const role = String(body.role || "").trim().toLowerCase();
+  // First name: optional on the server, tidied up ("  aDA " -> "Ada"), max 50 characters.
+  const rawName = String(body.name || "").trim().replace(/\s+/g, " ").slice(0, 50);
+  const firstName = rawName ? rawName.charAt(0).toUpperCase() + rawName.slice(1) : "";
 
   // Honeypot: a hidden field real visitors leave empty; bots fill it in.
   if (body.website) return res.status(200).json({ ok: true });
@@ -57,7 +60,12 @@ export default async function handler(req, res) {
       headers,
       body: JSON.stringify({
         email,
-        attributes: { ROLE: roleValue, SIGNUP_DATE: signupDate },
+        // FIRSTNAME is only sent when given, so an existing name is never wiped out.
+        attributes: {
+          ROLE: roleValue,
+          SIGNUP_DATE: signupDate,
+          ...(firstName ? { FIRSTNAME: firstName } : {}),
+        },
         listIds: [Number(process.env.BREVO_LIST_ID || 3)],
         updateEnabled: true,
       }),
@@ -78,7 +86,7 @@ export default async function handler(req, res) {
           sender: { name: "Wilde Waitlist", email: process.env.SENDER_EMAIL },
           to: [{ email: process.env.NOTIFY_EMAIL }],
           subject: `New Wilde sign-up: ${email} (${role})`,
-          textContent: `${isNew ? "New" : "Returning"} sign-up\nEmail: ${email}\nRole now: ${roleValue}\nSigned up: ${signupDate}`,
+          textContent: `${isNew ? "New" : "Returning"} sign-up\nName: ${firstName || "(not given)"}\nEmail: ${email}\nRole now: ${roleValue}\nSigned up: ${signupDate}`,
         }),
       }).catch((e) => { console.error("Notify failed", e); return null; });
       if (notify && !notify.ok) {
