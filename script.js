@@ -27,6 +27,10 @@ const msg = document.getElementById('form-message');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  const name = form.name.value.trim();
+  if (!name) { msg.textContent = 'Please enter your first name.';
+    return; }
   const email = form.email.value.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     msg.textContent = 'Please enter a valid email address.';
@@ -39,6 +43,7 @@ form.addEventListener('submit', async (e) => {
     const res = await fetch('/api/waitlist', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, role: form.role.value, website: form.website.value }),
       body: JSON.stringify({ email, role: form.role.value, website: form.website.value })
     });
     const data = await res.json().catch(() => ({}));
