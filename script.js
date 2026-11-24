@@ -44,7 +44,7 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
       form.reset();
-      msg.textContent = "You're on the Wilde waitlist 🎉";
+      msg.textContent = "Congratulations!! You're on the Wilde waitlist 🎉";
       msg.style.color = "green"
     } else {
       msg.textContent = data.error || 'Something went wrong. Please try again.';
