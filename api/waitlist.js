@@ -68,8 +68,10 @@ export default async function handler(req, res) {
     }
 
     // 3. Optional: email the team about the new sign-up.
-    if (process.env.NOTIFY_EMAIL && process.env.SENDER_EMAIL) {
-      await fetch(`${BREVO}/smtp/email`, {
+    if (!process.env.NOTIFY_EMAIL || !process.env.SENDER_EMAIL) {
+      console.log("Notify skipped: NOTIFY_EMAIL or SENDER_EMAIL is not set");
+    } else {
+      const notify = await fetch(`${BREVO}/smtp/email`, {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -78,7 +80,10 @@ export default async function handler(req, res) {
           subject: `New Wilde sign-up: ${email} (${role})`,
           textContent: `${isNew ? "New" : "Returning"} sign-up\nEmail: ${email}\nRole now: ${roleValue}\nSigned up: ${signupDate}`,
         }),
-      }).catch((e) => console.error("Notify failed", e));
+      }).catch((e) => { console.error("Notify failed", e); return null; });
+      if (notify && !notify.ok) {
+        console.error("Notify error", notify.status, await notify.text());
+      }
     }
 
     return res.status(200).json({ ok: true });
