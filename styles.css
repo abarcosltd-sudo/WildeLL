@@ -596,6 +596,17 @@ model-viewer[loaded] .model-progress { display: none; }
   font-size: 1rem;
   color: var(--ink);
 }
+
+.form-row input[type="text"] {
+  flex: 1 1 220px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+}
 .form-row select {
   padding: 14px 12px;
   border: 1px solid var(--line);
