@@ -44,7 +44,6 @@ form.addEventListener('submit', async (e) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, role: form.role.value, website: form.website.value }),
-      body: JSON.stringify({ email, role: form.role.value, website: form.website.value })
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
