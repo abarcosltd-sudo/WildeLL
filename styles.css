@@ -692,6 +692,7 @@ model-viewer[loaded] .model-progress { display: none; }
   .team-grid { grid-template-columns: 1fr; }
   .form-row { flex-direction: column; }
   .form-row input[type="email"],
+  .form-row input[type="text"],
   .form-row select {
     flex: none;
     width: 100%;
