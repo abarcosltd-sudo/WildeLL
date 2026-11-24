@@ -21,48 +21,40 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* ---------- Waitlist form ---------- */
-  var form = document.getElementById("waitlist-form");
-  var message = document.getElementById("form-message");
+ 
+const form = document.getElementById('waitlist-form');
+const msg = document.getElementById('form-message');
 
-  if (form && message) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var emailField = document.getElementById("email");
-      var email = emailField.value.trim();
-      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        message.textContent =
-          "Enter a valid email address to join the waitlist.";
-        message.className = "form-message error";
-        emailField.focus();
-        return;
-      }
-      fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" },
-      })
-        .then(function (response) {
-          if (response.ok) {
-            message.textContent =
-              "You're on the list — we'll email " +
-              email +
-              " the moment Wilde opens its doors.";
-            message.className = "form-message success";
-            form.reset();
-          } else {
-            message.textContent =
-              "Something went wrong — please try again in a moment.";
-            message.className = "form-message error";
-          }
-        })
-        .catch(function () {
-          message.textContent =
-            "Something went wrong — please try again in a moment.";
-          message.className = "form-message error";
-        });
-    });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = form.email.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    msg.textContent = 'Please enter a valid email address.';
+    return;
   }
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  msg.textContent = 'Joining…';
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, role: form.role.value, website: form.website.value })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      form.reset();
+      msg.textContent = "You're on the Wilde waitlist 🎉";
+    } else {
+      msg.textContent = data.error || 'Something went wrong. Please try again.';
+    }
+  } catch {
+    msg.textContent = 'Network error. Please try again.';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 
   /* ---------- 3D quill: progress, load, and error handling ---------- */
   var modelViewer = document.getElementById("quill-model");

@@ -299,20 +299,25 @@
         <h2>Be first through the door</h2>
         <p>Wilde is pre-launch, with a working prototype already built. Leave your email and we'll let you know the moment the doors open.</p>
       </div>
-      <form class="waitlist-form" id="waitlist-form" action="https://formspree.io/f/mnpnqyyd" method="POST" novalidate>
-        <div class="form-row">
-          <label for="email" class="visually-hidden">Email address</label>
-          <input type="email" id="email" name="email" placeholder="you@email.com" required autocomplete="email">
-          <label for="role" class="visually-hidden">I am a...</label>
-          <select id="role" name="role">
-            <option value="writer">I'm a writer</option>
-            <option value="reader">I'm a reader</option>
-            <option value="investor">I'm an investor</option>
-          </select>
-          <button type="submit" class="btn btn-primary">Join the waitlist</button>
-        </div>
-        <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
-      </form>
+
+<form class="waitlist-form" id="waitlist-form" novalidate>
+      <div class="form-row">
+        <label for="email" class="visually-hidden">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com" required autocomplete="email">
+        <label for="role" class="visually-hidden">I am a...</label>
+        <select id="role" name="role">
+          <option value="writer">I'm a writer</option>
+          <option value="reader">I'm a reader</option>
+          <option value="investor">I'm an investor</option>
+        </select>
+        <!-- Honeypot: hidden from people, bots fill it in -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+              style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <button type="submit" class="btn btn-primary">Join the waitlist</button>
+      </div>
+      <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+</form>
+
     </div>
   </section>
 
